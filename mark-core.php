@@ -14,7 +14,7 @@
 function mark_activation_hook()
 {
 	// Code to run on activation
-	error_log(message: 'Plugin activated!');
+	error_log('Plugin activated!');
 }
 register_activation_hook(__FILE__, 'mark_activation_hook');
 
@@ -28,7 +28,7 @@ register_deactivation_hook(__FILE__, 'mark_deactivation_hook');
 
 
 
-// Load plugin textdomain
+// Load a textdomain (optional for translation support).
 function wordcount_load()
 {
 	load_plugin_textdomain('mark-core', false, dirname(plugin_basename(__FILE__)) . '/languages');
@@ -36,15 +36,29 @@ function wordcount_load()
 add_action('plugins_loaded', 'wordcount_load');
 
 // Show word count after post title
-function mark_show_word_count_after_title($title, $id = null)
-{
-	if (is_singular('post') && in_the_loop() && !is_admin()) {
-		$content = get_post_field('post_content', $id);
-		$word_count = str_word_count(wp_strip_all_tags($content));
+// function mark_show_word_count($content)
+// {
+// 	if (is_singular('post')) {
+// 		// $content = get_post_field('post_content');
+// 		// echo "<pre>";
+// 		// print_r($content);
+// 		// echo "</pre>";
+// 		$trip_post = wp_strip_all_tags($content);
+// 		$word_count = str_word_count($trip_post);
+// 		// var_dump($word_count);
 
-		// Append word count to the title
-		$title .= ' <span style="font-size:14px; color:#888;">(' . sprintf(__('%s words', 'mark-core'), $word_count) . ')</span>';
-	}
-	return $title;
+// 		// Append word count to the title
+// 		$content .= ' <span style="font-size:14px; color:#888;">(' . sprintf(__('%s words', 'mark-core'), $word_count) . ')</span>';
+// 	}
+// 	return $content;
+// }
+
+function mark_show_word_count($content)
+{
+	$trip_post = wp_strip_all_tags($content);
+	$word_count = str_word_count($trip_post);
+	$label = __('Total number of words', 'mark-core');
+	$content .= sprintf('<h2>%s: %s</h2>', $label, $word_count);
+	return $content;
 }
-add_filter('the_title', 'mark_show_word_count_after_title', 10, 2);
+add_filter('the_content', 'mark_show_word_count', 10, 2);;
