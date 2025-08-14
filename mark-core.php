@@ -58,7 +58,16 @@ function mark_show_word_count($content)
 	$trip_post = wp_strip_all_tags($content);
 	$word_count = str_word_count($trip_post);
 	$label = __('Total number of words', 'mark-core');
+	$label = apply_filters("mark_heading", $label);
 	$content .= sprintf('<h2>%s: %s</h2>', $label, $word_count);
 	return $content;
 }
 add_filter('the_content', 'mark_show_word_count', 10, 2);;
+
+
+function mark_wordcount_heading($h_heading)
+{
+	$h_heading = "Total Count";
+	return  $h_heading;
+}
+add_filter("mark_heading", "mark_wordcount_heading");
