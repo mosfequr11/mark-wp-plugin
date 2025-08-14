@@ -59,15 +59,24 @@ function mark_show_word_count($content)
 	$word_count = str_word_count($trip_post);
 	$label = __('Total number of words', 'mark-core');
 	$label = apply_filters("mark_heading", $label);
-	$content .= sprintf('<h2>%s: %s</h2>', $label, $word_count);
+	$tag = apply_filters("mark_tag", "h2");
+	$content .= sprintf('<%s>%s: %s</%s>', $tag, $label, $word_count, $tag);
 	return $content;
 }
-add_filter('the_content', 'mark_show_word_count', 10, 2);;
+add_filter('the_content', 'mark_show_word_count', 10, 2);
 
-
+//Change the Label
 function mark_wordcount_heading($h_heading)
 {
 	$h_heading = "Total Count";
 	return  $h_heading;
 }
 add_filter("mark_heading", "mark_wordcount_heading");
+
+//Change the tag
+function mark_wordcount_tag($t_tag)
+{
+	$t_tag = "h5";
+	return  $t_tag;
+}
+add_filter("mark_tag", "mark_wordcount_tag");
