@@ -80,3 +80,18 @@ function mark_wordcount_tag($t_tag)
 	return  $t_tag;
 }
 add_filter("mark_tag", "mark_wordcount_tag");
+
+// Check Content reading time
+function mark_reading_time($content)
+{
+	$strip_post = wp_strip_all_tags($content);
+	$word_count = str_word_count($strip_post);
+	$reading_minute = floor($word_count / 200);
+	$reading_second = floor($word_count % 200 / (200 / 60));
+	$label = __('Reading time', 'mark-core');
+	$label = apply_filters("mark_heading", $label);
+	$tag = apply_filters("mark_tag", "h3");
+	$content .= sprintf('<%s>%s: %s minuts %s second</%s>', $tag, $label, $reading_minute, $reading_second, $tag);
+	return $content;
+}
+add_filter('the_content', 'mark_reading_time', 10, 2);
