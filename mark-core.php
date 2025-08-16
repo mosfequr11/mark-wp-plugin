@@ -95,3 +95,16 @@ function mark_reading_time($content)
 	return $content;
 }
 add_filter('the_content', 'mark_reading_time', 10, 2);
+
+
+// Add QR code after the title
+function mark_add_qr_code($post_p)
+{
+	$current_post_id = get_the_ID($post_p);
+	$current_post_title = get_the_title($current_post_id);
+	$current_post_url = urldecode(get_the_permalink($current_post_id));
+	$image_src = sprintf('https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=%s', $current_post_url);
+	$post_p .= sprintf("<div class='qrcode'><img src='%s' alt='%s'></div>", $image_src, $current_post_title);
+	return $post_p;
+}
+add_filter('the_content', 'mark_add_qr_code', 10, 1);
