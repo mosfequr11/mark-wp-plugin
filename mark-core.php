@@ -97,7 +97,7 @@ function mark_reading_time($content)
 add_filter('the_content', 'mark_reading_time', 10, 2);
 
 
-// Add QR code after the title
+// Add QR code after the post content
 function mark_add_qr_code($post_p)
 {
 	$current_post_id = get_the_ID($post_p);
@@ -105,6 +105,22 @@ function mark_add_qr_code($post_p)
 	$current_post_url = urldecode(get_the_permalink($current_post_id));
 	$image_src = sprintf('https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=%s', $current_post_url);
 	$post_p .= sprintf("<div class='qrcode'><img src='%s' alt='%s'></div>", $image_src, $current_post_title);
-	return $post_p;
+	//Check post type
+	$current_post_type = get_post_type($current_post_id);
+	$check_post_type = apply_filters('mark_check_post_type', array());
+	if (in_array($current_post_type, $check_post_type)) {
+		return $post_p;
+	}
 }
 add_filter('the_content', 'mark_add_qr_code', 10, 1);
+
+
+// post type check function
+function mark_post_type_check($p_type_check)
+{
+	$p_type_check[] = "post";
+	//
+	//array_push($p_type_check,"post");
+	return  $p_type_check;
+}
+add_filter("mark_check_post_type", "mark_post_type_check");
