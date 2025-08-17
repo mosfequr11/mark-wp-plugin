@@ -90,6 +90,7 @@ function mark_reading_time($content)
 	$reading_second = floor($word_count % 200 / (200 / 60));
 	$label = __('Reading time', 'mark-core');
 	$label = apply_filters("mark_heading", $label);
+	//Tag change Hook
 	$tag = apply_filters("mark_tag", "h3");
 	$content .= sprintf('<%s>%s: %s minuts %s second</%s>', $tag, $label, $reading_minute, $reading_second, $tag);
 	return $content;
@@ -103,9 +104,11 @@ function mark_add_qr_code($post_p)
 	$current_post_id = get_the_ID($post_p);
 	$current_post_title = get_the_title($current_post_id);
 	$current_post_url = urldecode(get_the_permalink($current_post_id));
-	$image_src = sprintf('https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=%s', $current_post_url);
+	// Image Dimension Hook
+	$dimension = apply_filters('mark_image_dimentation', '200x150');
+	$image_src = sprintf('https://api.qrserver.com/v1/create-qr-code/?size=%s&data=%s', $dimension, $current_post_url);
 	$post_p .= sprintf("<div class='qrcode'><img src='%s' alt='%s'></div>", $image_src, $current_post_title);
-	//Check post type
+	// Check post type Hook
 	$current_post_type = get_post_type($current_post_id);
 	$check_post_type = apply_filters('mark_check_post_type', array());
 	if (in_array($current_post_type, $check_post_type)) {
@@ -124,3 +127,12 @@ function mark_post_type_check($p_type_check)
 	return  $p_type_check;
 }
 add_filter("mark_check_post_type", "mark_post_type_check");
+
+
+// Change the image size
+function change_img_size($img_size)
+{
+	$img_size = '200x200';
+	return  $img_size;
+}
+add_filter('mark_image_dimentation', "change_img_size");
